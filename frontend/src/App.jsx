@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./styles.css";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+const API = import.meta.env.VITE_API_URL || "/api/v1";
 
 const authHeader = () => {
   const t = localStorage.getItem("shop_token");
