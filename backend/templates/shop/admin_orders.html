@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}All Orders · Owner{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+  <div>
+    <a href="{% url 'shop:admin_dashboard' %}" class="text-sm text-brand-600 font-medium">← Dashboard</a>
+    <h1 class="text-2xl font-bold text-slate-900 mt-1">All Orders</h1>
+    <p class="text-sm text-slate-500">Total: <strong>{{ total_orders }}</strong> orders (owner only)</p>
+  </div>
+</div>
+
+<form method="get" class="bg-white rounded-xl border border-slate-100 p-4 mb-6 flex flex-wrap gap-3 items-end">
+  <div>
+    <label class="text-xs text-slate-500">Status</label>
+    <select name="status" class="block rounded-lg border border-slate-200 px-3 py-2 text-sm">
+      <option value="">All</option>
+      {% for val, label in status_choices %}
+      <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="text-xs text-slate-500">Payment</label>
+    <select name="payment" class="block rounded-lg border border-slate-200 px-3 py-2 text-sm">
+      <option value="">All</option>
+      {% for val, label in payment_choices %}
+      <option value="{{ val }}" {% if payment_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="text-xs text-slate-500">Search</label>
+    <input type="text" name="q" value="{{ q }}" placeholder="Customer or order id" class="block rounded-lg border border-slate-200 px-3 py-2 text-sm w-48">
+  </div>
+  <button type="submit" class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm">Filter</button>
+</form>
+
+{% if orders %}
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+      <tr>
+        <th class="px-4 py-3 text-left">Customer</th>
+        <th class="px-4 py-3 text-left">Status</th>
+        <th class="px-4 py-3 text-left">Payment</th>
+        <th class="px-4 py-3 text-right">Total</th>
+        <th class="px-4 py-3 text-left">Date</th>
+        <th class="px-4 py-3 text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for o in orders %}
+      <tr>
+        <td class="px-4 py-3">
+          <div class="font-medium">{{ o.customer.full_name }}</div>
+          <div class="text-xs text-slate-400">{{ o.customer.email }}</div>
+        </td>
+        <td class="px-4 py-3">
+          <form method="post" action="{% url 'shop:admin_order_status' o.id %}" class="flex gap-1 items-center">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'shop:admin_orders' %}?status={{ status_filter }}&payment={{ payment_filter }}&q={{ q }}">
+            <select name="status" class="rounded border border-slate-200 text-xs px-1 py-1" onchange="this.form.submit()">
+              {% for val, label in status_choices %}
+              <option value="{{ val }}" {% if o.status == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+        <td class="px-4 py-3">
+          <form method="post" action="{% url 'shop:admin_order_payment' o.id %}" class="flex gap-1 items-center">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'shop:admin_orders' %}?status={{ status_filter }}&payment={{ payment_filter }}&q={{ q }}">
+            <select name="payment_status" class="rounded border border-slate-200 text-xs px-1 py-1" onchange="this.form.submit()">
+              {% for val, label in payment_choices %}
+              <option value="{{ val }}" {% if o.payment_status == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+        <td class="px-4 py-3 text-right font-semibold tabular-nums">{{ o.total_amount }}</td>
+        <td class="px-4 py-3 text-slate-500 whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
+        <td class="px-4 py-3 text-right">
+          <a href="{% url 'shop:order_detail' o.id %}" class="text-brand-600 text-xs font-medium">Detail</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-slate-500">No orders match.</p>
+{% endif %}
+{% endblock %}

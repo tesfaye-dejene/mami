@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Cart · Inventory Shop{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold text-slate-900 mb-6">Shopping Cart</h1>
+
+{% if items %}
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+      <tr>
+        <th class="px-4 py-3 text-left">Product</th>
+        <th class="px-4 py-3 text-center">Qty</th>
+        <th class="px-4 py-3 text-right">Price</th>
+        <th class="px-4 py-3 text-right">Subtotal</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for item in items %}
+      <tr>
+        <td class="px-4 py-3 font-medium">{{ item.product.name }}</td>
+        <td class="px-4 py-3">
+          <form method="post" action="{% url 'shop:cart_update' item.product.id %}" class="flex justify-center gap-1">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="w-16 border border-slate-200 rounded-lg px-2 py-1 text-center">
+            <button type="submit" class="text-xs text-brand-600 font-medium">Update</button>
+          </form>
+        </td>
+        <td class="px-4 py-3 text-right tabular-nums">{{ item.product.price }}</td>
+        <td class="px-4 py-3 text-right font-semibold tabular-nums">{{ item.subtotal }}</td>
+        <td class="px-4 py-3">
+          <form method="post" action="{% url 'shop:cart_remove' item.product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="text-rose-500 hover:text-rose-700 text-xs">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="px-4 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="text-lg font-bold">Total: <span class="text-brand-700">{{ cart_total }} ETB</span></div>
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'shop:checkout' %}">
+      {% csrf_token %}
+      <button type="submit" class="px-6 py-2.5 rounded-xl bg-brand-600 text-white font-semibold hover:bg-brand-700 shadow-lg shadow-brand-600/20">
+        Place Order
+      </button>
+    </form>
+    {% else %}
+    <a href="{% url 'shop:login' %}?next={% url 'shop:cart' %}" class="px-6 py-2.5 rounded-xl bg-slate-800 text-white font-semibold hover:bg-slate-700">
+      Login to checkout
+    </a>
+    {% endif %}
+  </div>
+</div>
+<p class="mt-4 text-sm text-slate-500">Orders are private: only you and the shop owner can view them.</p>
+{% else %}
+<div class="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
+  <p class="text-slate-500 mb-4">Your cart is empty.</p>
+  <a href="{% url 'shop:home' %}" class="text-brand-600 font-medium">Continue shopping →</a>
+</div>
+{% endif %}
+{% endblock %}

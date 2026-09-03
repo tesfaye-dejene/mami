@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Products · Owner{% endblock %}
+{% block content %}
+<a href="{% url 'shop:admin_dashboard' %}" class="text-sm text-brand-600 font-medium">← Dashboard</a>
+<h1 class="text-2xl font-bold text-slate-900 mt-2 mb-6">Products</h1>
+<p class="text-sm text-slate-500 mb-4">Manage products in Django Admin for full edit. This is a quick overview.</p>
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+      <tr>
+        <th class="px-4 py-3 text-left">Name</th>
+        <th class="px-4 py-3 text-right">Price</th>
+        <th class="px-4 py-3 text-right">Stock</th>
+        <th class="px-4 py-3 text-left">Available</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for p in products %}
+      <tr>
+        <td class="px-4 py-3 font-medium">{{ p.name }}</td>
+        <td class="px-4 py-3 text-right tabular-nums">{{ p.price }}</td>
+        <td class="px-4 py-3 text-right">{{ p.stock_quantity }}</td>
+        <td class="px-4 py-3">{% if p.is_available and p.is_active %}Yes{% else %}No{% endif %}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No products</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Owner Dashboard · Inventory Shop{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900">Owner Dashboard</h1>
+    <p class="text-sm text-slate-500">Only staff/owner can see this page and all customer orders.</p>
+  </div>
+  <div class="flex gap-2">
+    <a href="{% url 'shop:admin_orders' %}" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-medium hover:bg-slate-800">All Orders</a>
+    <a href="{% url 'shop:admin_products' %}" class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium hover:bg-slate-50">Products</a>
+    <a href="/admin/" class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium hover:bg-slate-50">Django Admin</a>
+  </div>
+</div>
+
+<!-- Order counts -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+  <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+    <div class="text-xs text-slate-400 uppercase tracking-wide">Total orders</div>
+    <div class="text-3xl font-bold text-slate-900 mt-1">{{ total_orders }}</div>
+  </div>
+  <div class="bg-amber-50 rounded-2xl border border-amber-100 p-4">
+    <div class="text-xs text-amber-700 uppercase tracking-wide">Pending</div>
+    <div class="text-3xl font-bold text-amber-800 mt-1">{{ pending }}</div>
+  </div>
+  <div class="bg-sky-50 rounded-2xl border border-sky-100 p-4">
+    <div class="text-xs text-sky-700 uppercase tracking-wide">Confirmed</div>
+    <div class="text-3xl font-bold text-sky-800 mt-1">{{ confirmed }}</div>
+  </div>
+  <div class="bg-indigo-50 rounded-2xl border border-indigo-100 p-4">
+    <div class="text-xs text-indigo-700 uppercase tracking-wide">Processing</div>
+    <div class="text-3xl font-bold text-indigo-800 mt-1">{{ processing }}</div>
+  </div>
+  <div class="bg-emerald-50 rounded-2xl border border-emerald-100 p-4">
+    <div class="text-xs text-emerald-700 uppercase tracking-wide">Completed</div>
+    <div class="text-3xl font-bold text-emerald-800 mt-1">{{ completed }}</div>
+  </div>
+  <div class="bg-rose-50 rounded-2xl border border-rose-100 p-4">
+    <div class="text-xs text-rose-700 uppercase tracking-wide">Cancelled</div>
+    <div class="text-3xl font-bold text-rose-800 mt-1">{{ cancelled }}</div>
+  </div>
+</div>
+
+<div class="grid sm:grid-cols-3 gap-4 mb-8">
+  <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+    <div class="text-xs text-slate-400 uppercase">Completed revenue</div>
+    <div class="text-2xl font-bold text-brand-700 mt-1">{{ revenue }} ETB</div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+    <div class="text-xs text-slate-400 uppercase">Active products</div>
+    <div class="text-2xl font-bold text-slate-900 mt-1">{{ product_count }}</div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+    <div class="text-xs text-slate-400 uppercase">Customers</div>
+    <div class="text-2xl font-bold text-slate-900 mt-1">{{ customer_count }}</div>
+  </div>
+</div>
+
+<h2 class="font-semibold text-slate-800 mb-3">Recent orders</h2>
+{% if recent_orders %}
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+      <tr>
+        <th class="px-4 py-3 text-left">Customer</th>
+        <th class="px-4 py-3 text-left">Status</th>
+        <th class="px-4 py-3 text-right">Total</th>
+        <th class="px-4 py-3 text-left">Date</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for o in recent_orders %}
+      <tr class="hover:bg-slate-50/50">
+        <td class="px-4 py-3">
+          <div class="font-medium">{{ o.customer.full_name }}</div>
+          <div class="text-xs text-slate-400 font-mono">#{{ o.id|stringformat:"s"|slice:":8" }}</div>
+        </td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100">{{ o.status }}</span>
+        </td>
+        <td class="px-4 py-3 text-right font-semibold tabular-nums">{{ o.total_amount }}</td>
+        <td class="px-4 py-3 text-slate-500">{{ o.created_at|date:"M d, H:i" }}</td>
+        <td class="px-4 py-3 text-right">
+          <a href="{% url 'shop:order_detail' o.id %}" class="text-brand-600 text-xs font-medium">View</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-slate-500 text-sm">No orders yet.</p>
+{% endif %}
+{% endblock %}

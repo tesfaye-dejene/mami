@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Inventory Shop{% endblock %}</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: Inter, system-ui, sans-serif;
+    }
+  </style>
+</head>
+
+<body class="min-h-full bg-slate-50 text-slate-800 flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-14">
+
+        <a href="{% url 'shop:home' %}" class="flex items-center gap-2 font-bold text-slate-900">
+          <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-emerald-700 text-white flex items-center justify-center text-sm shadow">
+            IS
+          </span>
+          Inventory Shop
+        </a>
+
+        <div class="flex items-center gap-1 sm:gap-3 text-sm">
+          <a href="{% url 'shop:home' %}"
+             class="px-2 py-1.5 rounded-lg hover:bg-slate-100 {% if request.resolver_match.url_name == 'home' %}text-brand-700 font-medium{% endif %}">
+            Shop
+          </a>
+
+          <a href="{% url 'shop:cart' %}" class="px-2 py-1.5 rounded-lg hover:bg-slate-100 relative">
+            Cart
+            {% if cart_count %}
+              <span class="absolute -top-1 -right-1 bg-brand-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {{ cart_count }}
+              </span>
+            {% endif %}
+          </a>
+
+          {% if user.is_authenticated %}
+            <a href="{% url 'shop:my_orders' %}" class="px-2 py-1.5 rounded-lg hover:bg-slate-100">
+              My Orders
+            </a>
+
+            {% if user.is_staff %}
+              <a href="{% url 'shop:admin_dashboard' %}" class="px-2 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800">
+                Owner
+              </a>
+            {% endif %}
+
+            <span class="hidden sm:inline text-slate-400">|</span>
+            <span class="hidden sm:inline text-slate-500">{{ user.username }}</span>
+
+            <a href="{% url 'shop:logout' %}" class="px-2 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50">
+              Logout
+            </a>
+          {% else %}
+            <a href="{% url 'shop:login' %}" class="px-2 py-1.5 rounded-lg hover:bg-slate-100">
+              Login
+            </a>
+            <a href="{% url 'shop:register' %}" class="px-3 py-1.5 rounded-lg bg-brand-600 text-white hover:bg-brand-700">
+              Register
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- MESSAGES -->
+  {% if messages %}
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 mt-4 space-y-2 w-full">
+      {% for message in messages %}
+        <div class="rounded-xl px-4 py-3 text-sm font-medium shadow-sm
+          {% if 'error' in message.tags %}
+            bg-rose-50 border border-rose-200 text-rose-800
+          {% elif 'success' in message.tags %}
+            bg-emerald-50 border border-emerald-200 text-emerald-800
+          {% else %}
+            bg-sky-50 border border-sky-200 text-sky-800
+          {% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-6 w-full">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER (phone + email) -->
+  <footer class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 space-y-1">
+
+      <div class="font-semibold text-slate-700">
+        Inventory Shop
+      </div>
+
+      <div>
+        Phone:
+        <a href="tel:+251911000000" class="text-brand-700 hover:underline">
+          +251 929295613
+          
+        </a> <br/>
+         <a href="tel:+251911000000" class="text-brand-700 hover:underline">
+          
+          +251 911402079
+        </a>
+      </div>
+
+      <div>
+        Email:
+        <a href="mailto:info@inventoryshop.com" class="text-brand-700 hover:underline">
+          info@inventoryshop.com
+        </a>
+      </div>
+
+      <div class="text-xs text-slate-400 pt-2">
+        Orders visible only to customer + owner
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>
