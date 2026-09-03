@@ -185,7 +185,7 @@ export default function App() {
             {user?.is_staff && (
               <a
                 className="admin-link"
-                href="http://127.0.0.1:8000/admin/"
+                href="/admin/"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -435,14 +435,15 @@ export default function App() {
         </main>
       )}
 
-            {page === "contact" && (
+      {page === "contact" && (
         <main className="wrap page">
           <h2>Contact us</h2>
 
           <p className="muted">
             Phone:{" "}
-            <a href="tel:+251911000000">+251 929295613</a><br />
-            <a href="tel:+251911000000">+251 911402079</a>
+            <a href="tel:+251929295613">+251 929295613</a>
+            <br />
+            <a href="tel:+251911402079">+251 911402079</a>
             <br />
             Email:{" "}
             <a href="mailto:info@inventoryshop.com">
@@ -490,16 +491,16 @@ export default function App() {
         </main>
       )}
 
-            <footer>
+      <footer>
         <div className="wrap footer-grid">
-
           <div>
             <b>INVENTORY SHOP</b>
             <p>Quality products and reliable service.</p>
             <p>
               Phone:{" "}
-              <a href="tel:+251911000000">+251 929295613</a><br />
-              <a href="tel:+251911000000">+251 911402079</a>
+              <a href="tel:+251929295613">+251 929295613</a>
+              <br />
+              <a href="tel:+251911402079">+251 911402079</a>
             </p>
             <p>
               Email:{" "}
@@ -524,7 +525,6 @@ export default function App() {
               My orders
             </button>
           </div>
-
         </div>
       </footer>
 
